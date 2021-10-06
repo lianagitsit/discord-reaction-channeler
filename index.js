@@ -24,7 +24,7 @@ client.on('messageReactionAdd', async (reaction, users) => {
 		}
 	}
 
-    if (reaction.emoji.name !== '📰') {
+    if (reaction.emoji.name !== '📰' || reaction.message.reactions.cache.has('📰')) {
         return;
     }
 
@@ -37,7 +37,7 @@ client.on('messageReactionAdd', async (reaction, users) => {
 	.setURL(reaction.message.url)
 	.setAuthor(author.username, author.avatarURL(), )
 	.setDescription(reaction.message.content)
-    .setImage(image);
+    .setThumbnail(image);
 
     channel.send({ embeds: [embed] }).catch(console.error);
 })
