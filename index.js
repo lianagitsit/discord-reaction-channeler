@@ -14,20 +14,6 @@ client.once('ready', () => {
     client.channels.fetch(channelId).then(gChannel => channel = gChannel);
 });
 
-client.on('interactionCreate', async interaction => {
-	if (!interaction.isCommand()) return;
-
-	const { commandName } = interaction;
-
-	if (commandName === 'ping') {
-		await interaction.reply('Pong!');
-	} else if (commandName === 'server') {
-		await interaction.reply('Server info.');
-	} else if (commandName === 'user') {
-		await interaction.reply('User info.');
-	}
-});
-
 client.on('messageReactionAdd', async (reaction, users) => {
 	if (reaction.partial) {
 		try {
@@ -41,37 +27,19 @@ client.on('messageReactionAdd', async (reaction, users) => {
     if (reaction.emoji.name !== '📰') {
         return;
     }
-    // // console.log("Someone logged the news!")
-    // console.log(`${users.username}'s message "${reaction.message.content}" is newsworthy!`);
-    // // console.log(reaction.message);
-    // console.log(channel.name)
 
-    // emoji is applied to message
-    // get message URL and send to channel
+    const author = reaction.message.author;
+    const image = reaction.message.attachments.first();
 
-    channel.send(reaction.message.url)
-    .then(message => console.log(`Sent message: ${message.content}`))
-    .catch(console.error);
+    const embed = new MessageEmbed()
+	.setColor('PURPLE')
+	.setTitle(reaction.message.createdAt.toDateString())
+	.setURL(reaction.message.url)
+	.setAuthor(author.username, author.avatarURL(), )
+	.setDescription(reaction.message.content)
+    .setImage(image?.url);
 
-    // const exampleEmbed = new MessageEmbed()
-	// .setColor('#0099ff')
-	// .setTitle('Some title')
-	// .setURL(reaction.message.url)
-	// .setAuthor('Some name', 'https://i.imgur.com/AfFp7pu.png', 'https://discord.js.org')
-	// .setDescription('Some description here')
-	// .setThumbnail('https://i.imgur.com/AfFp7pu.png')
-	// .addFields(
-	// 	{ name: 'Regular field title', value: 'Some value here' },
-	// 	{ name: '\u200B', value: '\u200B' },
-	// 	{ name: 'Inline field title', value: 'Some value here', inline: true },
-	// 	{ name: 'Inline field title', value: 'Some value here', inline: true },
-	// )
-	// .addField('Inline field title', 'Some value here', true)
-	// .setImage('https://i.imgur.com/AfFp7pu.png')
-	// .setTimestamp()
-	// .setFooter('Some footer text here', 'https://i.imgur.com/AfFp7pu.png');
-
-    // channel.send({ embeds: [exampleEmbed] });
+    channel.send({ embeds: [embed] }).catch(console.error);
 })
 
 client.login(token);
