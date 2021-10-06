@@ -29,7 +29,7 @@ client.on('messageReactionAdd', async (reaction, users) => {
     }
 
     const author = reaction.message.author;
-    const image = reaction.message.attachments.first();
+    const image = reaction.message.attachments.first() ? reaction.message.attachments.first().url : null;
 
     const embed = new MessageEmbed()
 	.setColor('PURPLE')
@@ -37,7 +37,7 @@ client.on('messageReactionAdd', async (reaction, users) => {
 	.setURL(reaction.message.url)
 	.setAuthor(author.username, author.avatarURL(), )
 	.setDescription(reaction.message.content)
-    .setImage(image?.url);
+    .setImage(image);
 
     channel.send({ embeds: [embed] }).catch(console.error);
 })
