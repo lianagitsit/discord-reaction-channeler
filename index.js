@@ -10,7 +10,9 @@ const client = new Client({
 let channel;
 
 client.once('ready', () => {
-    console.log('Ready!');
+	const elapsed = Date.now();
+	const currentTime = new Date(elapsed);
+    console.log(`Ready at ${currentTime.toString()}!`);
     client.channels.fetch(channelId).then(gChannel => channel = gChannel);
 });
 
@@ -24,10 +26,19 @@ client.on('messageReactionAdd', async (reaction, users) => {
 		}
 	}
 
-    if (reaction.emoji.name !== '📰' || reaction.message.reactions.cache.has('📰')) {
+    if (reaction.emoji.name !== '📰') {
+		console.log(`Hit guard clause with ${reaction.emoji.name} on ${reaction.message.author.username}'s message: ${reaction.message.content}`)
         return;
     }
+	
+	const cache = reaction.message.reactions.cache;
+	const filter = cache.filter((r) => r.emoji.name === '📰')
+	if (filter.first().count > 1) {
+		console.log(`Cache has multiple 📰, news already posted.`);
+		return;
+	}
 
+	console.log(`Newsworthy message: ${reaction.message.content}`);
     const author = reaction.message.author;
     const image = reaction.message.attachments.first() ? reaction.message.attachments.first().url : null;
 
